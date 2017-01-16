@@ -25,9 +25,6 @@ def install(name, path):
         includes = os.listdir(path + '/include')
         libs = os.listdir(path +  '/lib')
         bins = os.listdir(path + '/bin')
-        print(includes)
-        print(libs)
-        print(bins)
         config[name] = { 'include' : includes, 'lib' : libs, 'bin' : bins }
         def cpy(fname, src, dest):
             src = path + '/' + src + '/' + fname
