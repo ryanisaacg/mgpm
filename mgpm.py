@@ -1,7 +1,7 @@
 #!python
 import json
 import os
-from shutil import copy
+import shutil
 import sys
 
 config_path = os.path.expanduser('~') + '/.mgpmrc'
@@ -15,10 +15,9 @@ except FileNotFoundError:
     with open(config_path, 'w+') as f:
         f.write(json.dumps(config))
 
-install = config['__INSTALL_PATH']
+install_dir = config['__INSTALL_PATH']
 
 #Install/remove/update return True if they have affected the installation
-
 def install(name, path):
     if name in config:
         return False
@@ -26,10 +25,21 @@ def install(name, path):
         includes = os.listdir(path + '/include')
         libs = os.listdir(path +  '/lib')
         bins = os.listdir(path + '/bin')
-        config['name'] = { 'include' : includes, 'lib' : libs, 'bin' : bins }
-        map(lambda x: copy(path + '/include/' + x, install + '/include'), includes)
-        map(lambda x: copy(path + '/lib/' + x, install + '/lib'), libs)
-        map(lambda x: copy(path + '/bin/' + x, install + '/lib'), bins)
+        print(includes)
+        print(libs)
+        print(bins)
+        config[name] = { 'include' : includes, 'lib' : libs, 'bin' : bins }
+        def cpy(fname, src, dest):
+            src = path + '/' + src + '/' + fname
+            dest = install_dir + '/' + dest
+            if os.path.isfile(src):
+                shutil.copy(src, dest)
+        for x in includes:
+            cpy(x, 'include', 'include')
+        for x in libs:
+            cpy(x, 'lib', 'lib')
+        for x in bins:
+            cpy(x, 'bin', 'lib')
         with open(config_path, 'w') as f:
             f.write(json.dumps(config))
         return True
@@ -37,9 +47,17 @@ def remove(name):
     if not name in config:
         return False
     else:
-        map(lambda x: os.remove(install + '/include/' + x), config[name]['include'])
-        map(lambda x: os.remove(install + '/lib/' + x), config[name]['lib'])
-        map(lambda x: os.remove(install + '/lib/' + x), config[name]['bin'])
+        def rem(fname, dst):
+            dst = install_dir + '/' + dst + '/' + fname
+            if os.path.isfile(dst):
+                os.remove(dst)
+        for x in config[name]['include']:
+            rem(x, 'include')
+        for x in config[name]['lib']:
+            rem(x, 'lib')
+        for x in config[name]['bin']:
+            rem(x, 'lib')
+        del config[name]
         with open(config_path, 'w') as f:
             f.write(json.dumps(config))
         return True
@@ -66,7 +84,7 @@ if command == "install":
     else:
         print(package + " installed successfully.")
 elif command == "remove":
-    modified = install(package)
+    modified = remove(package)
     if not modified:
         print("Package " + package + " is not installed.")
     else:
