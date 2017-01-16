@@ -4,12 +4,16 @@ import os
 from shutil import copy
 import sys
 
+config_path = os.path.expanduser('~') + '/.mgpmrc'
+
 try:
-    with open('~/.mgpmrc', 'r') as f:
+    with open(config_path, 'r') as f:
         config = json.loads(f.read())
 except FileNotFoundError:
     config = json.loads("{}")
     config['__INSTALL_PATH'] = input('Path to MinGW root: ')
+    with open(config_path, 'w+') as f:
+        f.write(json.dumps(config))
 
 install = config['__INSTALL_PATH']
 
@@ -26,7 +30,7 @@ def install(name, path):
         map(lambda x: copy(path + '/include/' + x, install + '/include'), includes)
         map(lambda x: copy(path + '/lib/' + x, install + '/lib'), libs)
         map(lambda x: copy(path + '/bin/' + x, install + '/lib'), bins)
-        with open('~/.mgpmrc', 'w') as f:
+        with open(config_path, 'w') as f:
             f.write(json.dumps(config))
         return True
 def remove(name):
@@ -36,7 +40,7 @@ def remove(name):
         map(lambda x: os.remove(install + '/include/' + x), config[name]['include'])
         map(lambda x: os.remove(install + '/lib/' + x), config[name]['lib'])
         map(lambda x: os.remove(install + '/lib/' + x), config[name]['bin'])
-        with open('~/.mgpmrc', 'w') as f:
+        with open(config_path, 'w') as f:
             f.write(json.dumps(config))
         return True
 def update(name, path):
