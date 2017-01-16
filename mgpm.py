@@ -1,3 +1,4 @@
+#!python
 import json
 import os
 from shutil import copy
