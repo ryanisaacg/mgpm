@@ -32,7 +32,7 @@ def install(name, path):
             if os.path.isfile(src):
                 shutil.copy(src, dest)
             elif os.path.exists(src):
-                shutil.copytree(src, dest + fname)
+                shutil.copytree(src, dest + '/' + fname)
         for x in includes:
             cpy(x, 'include', 'include')
         for x in libs:
