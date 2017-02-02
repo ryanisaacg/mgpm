@@ -1,4 +1,5 @@
 #!python
+#TODO: Overlapping library folders cause failure
 import json
 import os
 import shutil
