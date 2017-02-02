@@ -31,6 +31,8 @@ def install(name, path):
             dest = install_dir + '/' + dest
             if os.path.isfile(src):
                 shutil.copy(src, dest)
+            elif os.path.exists(src):
+                shutil.copytree(src, dest + '/' + fname)
         for x in includes:
             cpy(x, 'include', 'include')
         for x in libs:
@@ -48,6 +50,8 @@ def remove(name):
             dst = install_dir + '/' + dst + '/' + fname
             if os.path.isfile(dst):
                 os.remove(dst)
+            elif os.path.exists(dst):
+                shutil.rmtree(dst)
         for x in config[name]['include']:
             rem(x, 'include')
         for x in config[name]['lib']:
