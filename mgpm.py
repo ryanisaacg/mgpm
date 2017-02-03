@@ -1,4 +1,5 @@
 #!python
+import functools
 import json
 import os
 import shutil
@@ -14,9 +15,37 @@ except FileNotFoundError:
     config['__INSTALL_PATH'] = input('Path to MinGW root: ')
     with open(config_path, 'w+') as f:
         f.write(json.dumps(config))
+# A small utility to allow functional chaining
+class Stream(object):
+    def __init__(self, x):
+        self.x = x
+    def do(self, func, arg):
+        self.x = func(arg, self.x)
+        return self
+    def reduce(self, func, init):
+        self.x = functools.reduce(func, self.x, init)
+        return self
+    def list(self):
+        return list(self.x)
 
 install_dir = config['__INSTALL_PATH']
-
+def get_file(directory, prefix = ""):
+    members = os.listdir(directory)
+    def concat(path, x):
+        if len(path) > 0:
+            return path + '/' + x
+        else:
+            return x
+    files = (Stream(members)
+            .do(filter, lambda x: os.path.isfile(concat(directory, x)))
+            .do(map, lambda x: concat(prefix, x))
+            .list())
+    subdirs = (Stream(members)
+            .do(filter, lambda x: os.path.isdir(concat(directory, x)))
+            .do(map, lambda x: get_file(concat(directory, x), concat(prefix, x)))
+            .reduce(lambda x, y: x + y, [])
+            .list())
+    return files + subdirs
 #Install/remove/update return True if they have affected the installation
 def install(name, path):
     if name in config:
