@@ -51,9 +51,9 @@ def install(name, path):
     if name in config:
         return False
     else:
-        includes = os.listdir(path + '/include')
-        libs = os.listdir(path +  '/lib')
-        bins = os.listdir(path + '/bin')
+        includes = get_file(path + '/include')
+        libs = get_file(path +  '/lib')
+        bins = get_file(path + '/bin')
         config[name] = { 'include' : includes, 'lib' : libs, 'bin' : bins }
         def cpy(fname, src, dest):
             src = path + '/' + src + '/' + fname
