@@ -67,9 +67,7 @@ def install(name, path):
                 except OSError:
                     pass
             if os.path.isfile(src):
-                shutil.copy(src, dest)
-            elif os.path.exists(src):
-                shutil.copytree(src, dest + '/' + fname)
+                shutil.copy(src, dest + '/' + fname)
         for x in includes:
             cpy(x, 'include', 'include')
         for x in libs:
