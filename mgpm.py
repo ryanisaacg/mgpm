@@ -58,6 +58,14 @@ def install(name, path):
         def cpy(fname, src, dest):
             src = path + '/' + src + '/' + fname
             dest = install_dir + '/' + dest
+            folders = fname.replace('\\', '/').split('/')
+            if len(folders) > 1:
+                del folders[-1]
+                folders.insert(0, dest)
+                try:
+                    os.makedirs('/'.join(folders))
+                except OSError:
+                    pass
             if os.path.isfile(src):
                 shutil.copy(src, dest)
             elif os.path.exists(src):
