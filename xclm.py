@@ -1,18 +1,18 @@
-#!python
+#!/usr/bin/env python3
 import functools
 import json
 import os
 import shutil
 import sys
 
-config_path = os.path.expanduser('~') + '/.mgpmrc'
+config_path = os.path.expanduser('~') + '/.xclmrc'
 
 try:
     with open(config_path, 'r') as f:
         config = json.loads(f.read())
 except FileNotFoundError:
     config = json.loads("{}")
-    config['__INSTALL_PATH'] = input('Path to MinGW root: ')
+    config['__INSTALL_PATH'] = input('Path to compiler root: ')
     with open(config_path, 'w+') as f:
         f.write(json.dumps(config))
 # A small utility to allow functional chaining
@@ -141,4 +141,4 @@ elif command == 'list':
         if pack != "__INSTALL_PATH":
             print(pack)
 else:
-    print('Please enter a command. Command syntax is mgpm [install/remove/has/list/update] [package name]')
+    print('Please enter a command. Command syntax is xclm [install/remove/has/update] [package name] | list')
