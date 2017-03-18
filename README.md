@@ -2,7 +2,13 @@
 
 Installing third-party libraries (those your distro doesn't provide, or any library on Windows) 
 for C and C++ is painful, but it doesn't have to be. 
-XCLM is a lightweight utility that allows you to easily install or remove packages globally, removing the need for include directory or link directory flags for your projects. XCLM also doesn't require a package manifest file; headers should be top-level in `your-package/include` and linker input should be in `your-package/lib` and `your-package/bin` as appropriate. These files will be played in your `$root/include`, `$root/lib` and `$root/lib` folders respectively. On a Unix-derived system, `$root` is likely to be the system root (`/`), on a Windows system it will be the path to your MinGW installation.
+XCLM is a lightweight utility that allows you to easily install or remove packages 
+globally, removing the need for include directory or link directory flags for your projects. 
+XCLM also doesn't require a package manifest file; headers should be top-level in 
+`your-package/include` and linker input should be in `your-package/lib` and `your-package/bin` 
+as appropriate. These files will be played in your `$root/include`, `$root/lib` and 
+`$root/lib` folders respectively. On a Unix-derived system, `$root` is likely to be the 
+Unix System Resources folder (`/usr`), on a Windows system it will be the path to your MinGW installation.
 
 ## Installation
 
