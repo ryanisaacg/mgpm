@@ -23,4 +23,4 @@ To remove a package, run the command `xclm remove <name>`
 
 To see if a package is installed, run the command `xclm has <name>`
 
-To see all installed packages, run the command `mpgm list`
+To see all installed packages, run the command `xclm list`
