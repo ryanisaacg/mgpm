@@ -106,6 +106,12 @@ def update(name, path):
     return False
 def has(name):
     return name in config
+def getlib(name):
+	if name in config:
+		for lib in config[name]['lib']:
+			src = install_dir + os.sep + 'lib' + os.sep + lib
+			shutil.copy(src, lib)
+	return name in config
 
 #check for sudo access (required for many commands)
 if sys.platform != "win32" and os.geteuid() != 0:
@@ -149,5 +155,10 @@ elif command == 'list':
     for pack in config.keys():
         if pack != "__INSTALL_PATH":
             print(pack)
+elif command == 'getlib':
+	if getlib(package):
+		print(package + " library files have been placed in the current directory.")
+	else:
+		print("Package " + package + " is not installed.")
 else:
-    print('Please enter a command. Command syntax is xclm [install/remove/has/update] [package name] | list')
+    print('Please enter a command. Command syntax is xclm [install/remove/has/update/getlib] [package name] | list')

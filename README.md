@@ -30,3 +30,7 @@ To remove a package, run the command `xclm remove <name>`
 To see if a package is installed, run the command `xclm has <name>`
 
 To see all installed packages, run the command `xclm list`
+
+To place the lib files for a project into the current directory (to get a copy of dynamically linked libraries, for example) run the command `xclm getlib`
+
+Unix systems where the install root is outside the home directory for the current user will require sudo. If using sudo, all commands must be run with sudo.
