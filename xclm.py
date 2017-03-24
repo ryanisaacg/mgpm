@@ -2,6 +2,7 @@
 import functools
 import json
 import os
+import re
 import shutil
 import sys
 
@@ -30,10 +31,12 @@ class Stream(object):
 
 install_dir = config['__INSTALL_PATH']
 def get_file(directory, prefix = ""):
+    if not os.path.exists(directory):
+        return []
     members = os.listdir(directory)
     def concat(path, x):
         if len(path) > 0:
-            return path + '/' + x
+            return path + os.sep + x
         else:
             return x
     files = (Stream(members)
@@ -51,23 +54,23 @@ def install(name, path):
     if name in config:
         return False
     else:
-        includes = get_file(path + '/include')
-        libs = get_file(path +  '/lib')
-        bins = get_file(path + '/bin')
+        includes = get_file(path + os.sep + 'include')
+        libs = get_file(path + os.sep + 'lib')
+        bins = get_file(path + os.sep + 'bin')
         config[name] = { 'include' : includes, 'lib' : libs, 'bin' : bins }
         def cpy(fname, src, dest):
-            src = path + '/' + src + '/' + fname
-            dest = install_dir + '/' + dest
-            folders = fname.replace('\\', '/').split('/')
+            src = path + os.sep + src + os.sep + fname
+            dest = install_dir + os.sep + dest
+            folders = re.sub('(/|\\\\)+', os.sep, fname).split(os.sep) #Deduplicate all the slashes
             if len(folders) > 1:
                 del folders[-1]
                 folders.insert(0, dest)
                 try:
-                    os.makedirs('/'.join(folders))
+                    os.makedirs(os.sep.join(folders))
                 except OSError:
                     pass
             if os.path.isfile(src):
-                shutil.copy(src, dest + '/' + fname)
+                shutil.copy(src, dest + os.sep + fname)
         for x in includes:
             cpy(x, 'include', 'include')
         for x in libs:
@@ -82,7 +85,7 @@ def remove(name):
         return False
     else:
         def rem(fname, dst):
-            dst = install_dir + '/' + dst + '/' + fname
+            dst = install_dir + os.sep + dst + os.sep + fname
             if os.path.isfile(dst):
                 os.remove(dst)
             elif os.path.exists(dst):
@@ -103,6 +106,12 @@ def update(name, path):
     return False
 def has(name):
     return name in config
+
+#check for sudo access (required for many commands)
+if sys.platform != "win32" and os.geteuid() != 0:
+	class NotSudo(Exception):
+		pass
+	raise NotSudo("This program must be run as the root user on a *nix system.")
 
 if len(sys.argv) < 2:
     command = "null"
