@@ -61,7 +61,7 @@ def install(name, path):
         def cpy(fname, src, dest):
             src = path + os.sep + src + os.sep + fname
             dest = install_dir + os.sep + dest
-            folders = re.sub('(/|\\\\)+', os.sep, fname).split(os.sep) #Deduplicate all the slashes
+            folders = re.sub('(/|\\\\)+', '/', fname).split('/') #Deduplicate all the slashes
             if len(folders) > 1:
                 del folders[-1]
                 folders.insert(0, dest)
@@ -112,6 +112,12 @@ def getlib(name):
 			src = install_dir + os.sep + 'lib' + os.sep + lib
 			shutil.copy(src, lib)
 	return name in config
+def getbin(name):
+	if name in config:
+		for lib in config[name]['bin']:
+			src = install_dir + os.sep + 'lib' + os.sep + lib
+			shutil.copy(src, lib)
+	return name in config
 
 #check for sudo access (required for many commands)
 if sys.platform != "win32" and os.geteuid() != 0:
@@ -155,10 +161,15 @@ elif command == 'list':
     for pack in config.keys():
         if pack != "__INSTALL_PATH":
             print(pack)
+elif command == 'getbin':
+	if getbin(package):
+		print(package + " binary files have been placed in the current directory.")
+	else:
+		print("Package " + package + " is not installed.")
 elif command == 'getlib':
 	if getlib(package):
 		print(package + " library files have been placed in the current directory.")
 	else:
 		print("Package " + package + " is not installed.")
 else:
-    print('Please enter a command. Command syntax is xclm [install/remove/has/update/getlib] [package name] | list')
+    print('Please enter a command. Command syntax is xclm [install/remove/has/update/getlib/getbin] [package name] | list')
